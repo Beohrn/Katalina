@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:weightSum="100">
+
+    <ImageView
+        android:id="@+id/notifiation_image"
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
+        android:contentDescription="appImage"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/appName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="50"
+        android:gravity="clip_vertical"
+        android:text="recognizing"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+    <!--<Switch-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--/>-->
+
+    <!--<android.support.v7.widget.SwitchCompat-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/switch1"-->
+        <!--android:checked="false" />-->
+    <!--<Button-->
+        <!--android:id="@+id/closeOnFlash"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="20"-->
+        <!--android:text="close" />-->
+
+</LinearLayout>

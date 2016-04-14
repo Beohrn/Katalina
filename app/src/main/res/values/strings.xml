@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">AppHelp</string>
+    <!--<string-array name="intents">-->
+        <!--<item>VK</item>-->
+        <!--<item>ВК</item>-->
+        <!--<item>Вконтакте</item>-->
+        <!--<item>Vkontakte</item>-->
+
+    <!--</string-array>-->
+
+    <string name="VK">VK</string>
+    <string name="ВК">ВК</string>
+
+
+</resources>
