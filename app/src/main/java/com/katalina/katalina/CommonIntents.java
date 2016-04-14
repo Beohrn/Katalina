@@ -47,6 +47,7 @@ public class CommonIntents {
             case "камера":
                 startIntentWithAction(MediaStore.ACTION_IMAGE_CAPTURE);
 
+
                 break;
         }
 
