@@ -1,6 +1,12 @@
 package com.katalina.katalina;
 
+import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,12 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.RemoteViews;
 
-import com.katalina.katalina.fragments.AllAppsFragment;
-import com.katalina.katalina.fragments.MainAppsFragment;
-import com.katalina.katalina.fragments.SpeechService;
-import com.katalina.katalina.services.NotificationService;
 import com.katalina.katalina.services.VoiceRecognitionService;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,95 +31,91 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private boolean isSerivceUp = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+//        LeakCanary.install(getApplication());
 
+        final NotificationManager nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification.Builder builder = new Notification.Builder(getApplicationContext())
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setTicker("RecApp")
+                .setAutoCancel(true)
+                .setContentIntent(null);
 
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//
-//        viewPager = (ViewPager) findViewById(R.id.viewpager);
-//        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-//        adapter.addFragment(new AllAppsFragment(), "All Apps");
-//        adapter.addFragment(new MainAppsFragment(), "Main Apps");
-//        adapter.addFragment(new SpeechService(), "Speech");
-//        viewPager.setAdapter(adapter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            // build a complex notification, with buttons and such
 
-//        tabLayout = (TabLayout) findViewById(R.id.tabs);
-//        tabLayout.setupWithViewPager(viewPager);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-//        setSupportActionBar(toolbar);
-        final Intent service = new Intent(MainActivity.this, VoiceRecognitionService.class);
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startService(service);
+            RemoteViews notificationView = new RemoteViews(
+                    getApplicationContext().getPackageName(),
+                    R.layout.notification_layout
+            );
+
+            notificationView.setImageViewResource(
+                    R.id.imagenotileft,
+                    R.drawable.ic_launcher);
+            final Intent intent = new Intent(getApplicationContext(), VoiceRecognitionService.class);
+
+            if (!isSerivceUp) {
+                intent.setAction("STOP");
+                notificationView.setOnClickPendingIntent(R.id.stop, unInitialize(getApplicationContext(), intent));
+//                notificationView.setTextViewText(R.id.start, "START");
+            } else {
+                notificationView.setOnClickPendingIntent(R.id.start, initialize(getApplicationContext(), intent));
+//                notificationView.setTextViewText(R.id.start, "Start");
             }
-        });
 
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopService(service);
-            }
-        });
-
-//        SwitchCompat swch = (SwitchCompat) findViewById(R.id.switch1);
-
-//        final Intent intent = new Intent(this, VoiceRecognitionService.class);
-//        swch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
+//            findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
 //                    startService(intent);
-//                    //bindService(new Intent(MainActivity.this, VoiceRecognitionService.class), mServiceConnection, 0);
-//                } else {
-//                    stopService(intent);
-//                    //unbindService(mServiceConnection);
 //                }
-//            }
-//        });
-        final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        final List pkgAppsList = getPackageManager().queryIntentActivities(mainIntent, 0);
-        for (int i = 0; i < pkgAppsList.size(); i++) {
-            Log.i("Packeges", pkgAppsList.get(i).toString());
+//            });
+//
+//            findViewById(R.id.stop).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    stopService(intent);
+//                }
+//            });
+            notificationView.setTextViewText(R.id.title, getTitle());
+            notificationView.setTextViewText(R.id.text, "Tap on Start");
+
+
+            builder = builder.setContent(notificationView);
+
+        } else {
+            // Build a simpler notification, without buttons
+            builder = builder.setContentTitle(getTitle())
+                    .setContentText("LOLOLOLO")
+                    .setSmallIcon(android.R.drawable.ic_menu_gallery);
         }
+
+        final Notification notification = builder.build();
+
+        nm.notify(1010, notification);
+
+        Intent service = new Intent(this, VoiceRecognitionService.class);
+        startService(service);
+        finish();
 
     }
 
+    private PendingIntent initialize(Context context, Intent intent) {
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+        isSerivceUp = true;
+        return pendingIntent;
+    }
 
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
+    private PendingIntent unInitialize(Context context, Intent intent) {
 
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+        isSerivceUp = false;
+        return pendingIntent;
     }
 
 }

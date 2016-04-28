@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.speech.RecognitionListener;
+import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.Nullable;
@@ -36,10 +37,18 @@ public class VoiceRecognitionService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        if (intent != null)
+            if (intent.getAction() != null)
+                if (intent.getAction().equals("STOP"))
+                    stopSelf();
+
+
         Log.d(TAG, "onStartCommand");
         Toast.makeText(getApplicationContext(), "Start Service", Toast.LENGTH_SHORT).show();
 
         bindService(new Intent(this, VoiceRecognitionService.class), mServiceConnection, 0);
+
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -70,7 +79,6 @@ public class VoiceRecognitionService extends Service {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
-
 
 
     @Nullable
