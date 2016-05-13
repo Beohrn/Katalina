@@ -11,6 +11,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -208,6 +209,7 @@ public class VoiceRecognitionService extends Service {
             Log.d(TAG, "onResults: " + result.get(0).toString());
 
             Toast.makeText(getApplicationContext(), result.get(0), Toast.LENGTH_SHORT).show();
+
 
             new CommonIntents(getApplicationContext(), result.get(0).toString()).execute();
 
