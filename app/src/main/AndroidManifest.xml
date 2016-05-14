@@ -28,6 +28,9 @@
         </activity>
 
         <service android:name=".services.VoiceRecognitionService" />
+        <activity android:name="com.google.android.apps.chrome.Main"/>
+        <activity android:name="com.android.calendar.AllInOneActivity"/>
+        <activity android:name="com.google.android.youtube.app.honeycomb.Shell$HomeActivity"/>
     </application>
 
 </manifest>

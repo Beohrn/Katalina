@@ -15,9 +15,6 @@ import com.katalina.katalina.app.SpeechApp;
 
 import javax.inject.Inject;
 
-/**
- * Created by Alexander on 09.05.2016.
- */
 public class FragmentMicStop extends Fragment {
 
     private ImageButton imageButton;

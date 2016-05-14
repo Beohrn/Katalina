@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.speech.RecognitionListener;
-import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 
@@ -16,9 +15,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.katalina.katalina.CommonIntents;
+import com.katalina.katalina.intents.PackageInfo;
+import com.katalina.katalina.intents.CommonIntents;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class VoiceRecognitionService extends Service {
@@ -109,10 +110,8 @@ public class VoiceRecognitionService extends Service {
 
     public class SpeechListener implements RecognitionListener {
 
-
         private final String TAG = "VoiceRecognitionService";
         private boolean isCountDown;
-
 
         CountDownTimer timer = new CountDownTimer(10000, 1000) {
             @Override
@@ -122,13 +121,14 @@ public class VoiceRecognitionService extends Service {
 
             @Override
             public void onFinish() {
-//                startService(new Intent(VoiceRecognitionService.this, VoiceRecognitionService.class));
+
             }
         };
 
         @Override
         public void onReadyForSpeech(Bundle params) {
             Log.d(TAG, "onReadyForSpeech");
+            publishResults("Say something...");
             timer.start();
 
         }
@@ -208,15 +208,20 @@ public class VoiceRecognitionService extends Service {
                     .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             Log.d(TAG, "onResults: " + result.get(0).toString());
 
-            Toast.makeText(getApplicationContext(), result.get(0), Toast.LENGTH_SHORT).show();
-
-
-            new CommonIntents(getApplicationContext(), result.get(0).toString()).execute();
+            publishResults(result.get(0).toString());
 
             if (recognizer != null) {
                 cancel();
                 start();
             }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                new CommonIntents(getApplicationContext(), result.get(0).toString()).execute();
+            }
+
         }
 
         @Override
@@ -227,6 +232,12 @@ public class VoiceRecognitionService extends Service {
         @Override
         public void onEvent(int eventType, Bundle params) {
 
+        }
+
+        private void publishResults(String message) {
+            Intent intent = new Intent("com.katalina.katalina");
+            intent.putExtra("Message", message);
+            sendBroadcast(intent);
         }
 
     }

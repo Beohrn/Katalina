@@ -3,8 +3,11 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="speech_prompt">Say something&#8230;</string>
+    <string name="connection_error">Sorry! Network Connection Error!</string>
     <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
     <string name="tap_on_mic_to_start">Tap on mic to speak</string>
     <string name="tap_on_mic_to_stop">Tap on mic to stop speak</string>
+
+
 
 </resources>
